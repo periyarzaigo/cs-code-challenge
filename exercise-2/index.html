@@ -20,19 +20,6 @@
             <b>Todo</b>
           </h3>
           <ul id="incomplete-tasks">
-              <li>
-                  <input type="checkbox">
-                  <label>Pay Bills</label>
-                  <input type="text">
-                  <button class="edit edit-task-button">Edit</button>
-                  <button class="delete">Delete</button>
-              <li class="editMode">
-                  <input type="checkbox">
-                  <label>Go Shopping</label>
-                  <input type="text" value="Go Shopping">
-                  <button class="edit edit-task-button">Save</button>
-                  <button class="delete">Delete</button>
-              </li>
           </ul>
 
           <h3>
@@ -67,6 +54,7 @@
           editInput.type = "text";
           editButton.innerText = "Edit";
           editButton.className = "edit";
+		  editButton.dataset.value = taskString;
           deleteButton.innerText = "Delete";
           deleteButton.className = "delete";
           label.innerText = taskString;
@@ -94,6 +82,7 @@
 			incompleteTasksHolder.appendChild(listItem)
 			bindTaskEvents(listItem, taskCompleted)
 			taskInput.value = "";
+			addTaskToLocalStorage("todoTasks", listItemName);
 		  }else{
 			taskInput.classList.add("is-required");
 		  }
@@ -115,12 +104,34 @@
           }
           
           listItem.classList.toggle("editMode");
+		  
+		  let taskSlug = "";
+		  if(listItem.parentNode.id === "incomplete-tasks"){
+				taskSlug = "todoTasks";
+		  }else if(ul.id === "completed-tasks"){
+				taskSlug = "";
+		  }
+		  const taskValue = label.innerText;
+		  const exTaskTarget = button.dataset.value;
+		  updateTaskLocalStorage(taskSlug, taskValue, exTaskTarget);
+		  
         };
 
         var deleteTask = function (el) {
+
           var listItem = this.parentNode;
           var ul = listItem.parentNode;
           ul.removeChild(listItem);
+		  
+		  let taskSlug = "";
+		  if(ul.id === "incomplete-tasks"){
+				taskSlug = "todoTasks";
+		  }else if(ul.id === "completed-tasks"){
+				taskSlug = "";
+		  }
+
+		  const taskValue = this.parentNode.children[1].innerText;
+		  removeTaskFromLocalStorage(taskSlug, taskValue);
         };
 
         var taskCompleted = function (el) {
@@ -153,6 +164,55 @@
         for (var i = 0; i < completedTasksHolder.children.length; i++) {
           bindTaskEvents(completedTasksHolder.children[i], taskIncomplete);
         }
+		
+		const addTaskToLocalStorage = (slug, value) => {
+			const storedTasks = JSON.parse(localStorage.getItem(slug)) || [];
+			
+			const newTasks = [...storedTasks, value];
+			localStorage.setItem(slug, JSON.stringify(newTasks));
+
+		}
+		
+		const updateTaskLocalStorage = (slug, value, target) => {
+			const storedTasks = JSON.parse(localStorage.getItem(slug)) || [];
+			
+			console.log(storedTasks);
+			console.log(value);
+			console.log(target);
+			const newTasks = storedTasks.map(task => {
+				if(task === target){
+					return value;
+				}
+				return task;
+			});
+			localStorage.setItem(slug, JSON.stringify(newTasks));
+
+		}
+		
+		const removeTaskFromLocalStorage = (slug, value) => {
+			const storedTasks = JSON.parse(localStorage.getItem(slug)) || [];
+			
+			const newTasks = storedTasks.filter(task => {
+				return task !== value;
+			});
+			localStorage.setItem(slug, JSON.stringify(newTasks));
+
+		}
+		
+		window.onload = function() {
+			const defaultTodoTasks = JSON.parse(localStorage.getItem('todoTasks'));
+			
+			defaultTodoTasks && defaultTodoTasks.forEach((task) => {
+				listItem = createNewTaskElement(task)
+				incompleteTasksHolder.appendChild(listItem)
+				bindTaskEvents(listItem, taskCompleted)
+			});
+			
+			//localStorage.setItem('todoTasks', JSON.stringify(['Pay Bills', 'Go Shopping']));
+
+		};
+		
+		
       </script>
 
   </body>
