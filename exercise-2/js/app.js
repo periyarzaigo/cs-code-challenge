@@ -90,28 +90,29 @@ var editTask = function() {
 };
 
 var deleteTask = function(el) {
-
-    var listItem = this.parentNode;
-    var ul = listItem.parentNode;
-    ul.removeChild(listItem);
-
-    let taskSlug = "";
-    if (ul.id === "incomplete-tasks") {
-        taskSlug = "todoTasks";
-    } else if (ul.id === "completed-tasks") {
-        taskSlug = "completedTasks";
-    }
-
-    const taskValue = this.parentNode.children[1].innerText;
-    removeTaskFromLocalStorage(taskSlug, taskValue);
-    const todoTasks = JSON.parse(localStorage.getItem('todoTasks'));
-    if (!todoTasks || todoTasks.length === 0) {
-        toggleTodoTaskSection("none");
-    }
-    const completedTasks = JSON.parse(localStorage.getItem('completedTasks'));
-    if (!completedTasks || completedTasks.length === 0) {
-        toggleCompletedTaskSection("none");
-    }
+	if(confirm("Are u sure to delete the task?")){
+		var listItem = this.parentNode;
+		var ul = listItem.parentNode;
+		ul.removeChild(listItem);
+	
+		let taskSlug = "";
+		if (ul.id === "incomplete-tasks") {
+			taskSlug = "todoTasks";
+		} else if (ul.id === "completed-tasks") {
+			taskSlug = "completedTasks";
+		}
+	
+		const taskValue = this.parentNode.children[1].innerText;
+		removeTaskFromLocalStorage(taskSlug, taskValue);
+		const todoTasks = JSON.parse(localStorage.getItem('todoTasks'));
+		if (!todoTasks || todoTasks.length === 0) {
+			toggleTodoTaskSection("none");
+		}
+		const completedTasks = JSON.parse(localStorage.getItem('completedTasks'));
+		if (!completedTasks || completedTasks.length === 0) {
+			toggleCompletedTaskSection("none");
+		}
+	}
 };
 
 var taskCompleted = function(el) {
