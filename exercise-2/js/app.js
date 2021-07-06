@@ -29,16 +29,16 @@ var createNewTaskElement = function(taskString, arr) {
     return listItem;
 };
 
-const handleInputFocus = (el) => {
-    if (el.classList.contains("is-required")) {
-        el.classList.remove("is-required");
-    }
-}
-
 var addTask = function() {
     taskInput.classList.remove("is-required");
+    taskInput.classList.remove("is-error");
     var listItemName = taskInput.value;
     if (listItemName && listItemName.trim()) {
+		if(checkTaskDuplication(listItemName)){
+			taskInput.classList.add("is-error");
+			alert("Duplicate Task Name. Please try with different task name");
+			return;
+		}
         listItem = createNewTaskElement(listItemName)
         incompleteTasksHolder.appendChild(listItem)
         bindTaskEvents(listItem, taskCompleted)
@@ -57,6 +57,7 @@ var editTask = function() {
     var button = listItem.getElementsByTagName("button")[0];
 
     editInput.classList.remove("is-required");
+    editInput.classList.remove("is-error");
 
 
     var containsClass = listItem.classList.contains("editMode");
@@ -70,14 +71,21 @@ var editTask = function() {
 
     if (containsClass) {
         if (editInput.value && editInput.value.trim()) {
+			const taskValue = editInput.value;
+            const exTaskTarget = button.dataset.value;
+			
+			if(taskValue !== exTaskTarget && checkTaskDuplication(editInput.value)){
+				editInput.classList.add("is-error");
+				alert("Duplicate Task Name. Please try with different task name");
+				return;
+			}
             let taskSlug = "";
             if (listItem.parentNode.id === "incomplete-tasks") {
                 taskSlug = "todoTasks";
             } else if (listItem.parentNode.id === "completed-tasks") {
                 taskSlug = "completedTasks";
             }
-            const taskValue = editInput.value;
-            const exTaskTarget = button.dataset.value;
+            
             updateTaskLocalStorage(taskSlug, taskValue, exTaskTarget);
             listItem.classList.toggle("editMode");
             label.innerText = editInput.value;
@@ -163,6 +171,21 @@ for (var i = 0; i < incompleteTasksHolder.children.length; i++) {
 
 for (var i = 0; i < completedTasksHolder.children.length; i++) {
     bindTaskEvents(completedTasksHolder.children[i], taskIncomplete);
+}
+
+
+
+const checkTaskDuplication = (value) => {
+	const toDoTasks = JSON.parse(localStorage.getItem("todoTasks")) || [];
+	if(toDoTasks.includes(value)){
+		return true;
+	}
+	const completedTasks = JSON.parse(localStorage.getItem("completedTasks")) || [];
+		if(completedTasks.includes(value)){
+		return true;
+	}
+	
+	return false;
 }
 
 const addTaskToLocalStorage = (slug, value) => {
