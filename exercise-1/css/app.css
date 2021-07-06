@@ -1,0 +1,10 @@
+.additional-info{
+	display: none;
+}
+.user ul{
+	list-style: none;
+	padding-left: 0px;
+}
+.user ul li{
+	padding-bottom: 5px;
+}
