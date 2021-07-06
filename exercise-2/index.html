@@ -22,17 +22,10 @@
           <ul class="incomplete" id="incomplete-tasks">
           </ul>
 
-          <h3>
+          <h3 class="completed">
             <b>Completed</b>
           </h3>
-          <ul id="completed-tasks">
-              <li>
-                  <input type="checkbox" checked>
-                  <label>See the Doctor</label>
-                  <input type="text">
-                  <button class="edit">Edit</button>
-                  <button class="delete">Delete</button>
-              </li>
+          <ul class="completed" id="completed-tasks">
           </ul>
       </div>
 
@@ -106,13 +99,14 @@
 				button.innerText = "Save";
 		}
 		
+
 		if(containsClass){
 			if(editInput.value && editInput.value.trim()){		
 				let taskSlug = "";
 				if(listItem.parentNode.id === "incomplete-tasks"){
 						taskSlug = "todoTasks";
-				}else if(ul.id === "completed-tasks"){
-						taskSlug = "";
+				}else if(listItem.parentNode.id === "completed-tasks"){
+						taskSlug = "completedTasks";
 				}
 				const taskValue = editInput.value;
 				const exTaskTarget = button.dataset.value;
@@ -137,23 +131,50 @@
 		  if(ul.id === "incomplete-tasks"){
 				taskSlug = "todoTasks";
 		  }else if(ul.id === "completed-tasks"){
-				taskSlug = "";
+				taskSlug = "completedTasks";
 		  }
 
 		  const taskValue = this.parentNode.children[1].innerText;
 		  removeTaskFromLocalStorage(taskSlug, taskValue);
+		  const todoTasks = JSON.parse(localStorage.getItem('todoTasks'));
+		  	  if(!todoTasks || todoTasks.length === 0){				
+				toggleTodoTaskSection("none");
+			}
+					  const completedTasks = JSON.parse(localStorage.getItem('completedTasks'));
+		  if(!completedTasks || completedTasks.length === 0){				
+				toggleCompletedTaskSection("none");
+			}
         };
 
         var taskCompleted = function (el) {
+
           var listItem = this.parentNode;
           completedTasksHolder.appendChild(listItem);
           bindTaskEvents(listItem, taskIncomplete);
+		  toggleCompletedTaskSection("block")
+		  
+		  const taskValue = this.parentNode.children[1].innerText;
+		  removeTaskFromLocalStorage("todoTasks", taskValue);
+		  const todoTasks = JSON.parse(localStorage.getItem('todoTasks'));
+		  if(!todoTasks || todoTasks.length === 0){				
+				toggleTodoTaskSection("none");
+			}
+		  addTaskToLocalStorage("completedTasks", taskValue);
         };
 
         var taskIncomplete = function() {
           var listItem = this.parentNode;
           incompleteTasksHolder.appendChild(listItem);
           bindTaskEvents(listItem, taskCompleted);
+		  toggleTodoTaskSection("block")
+		  
+		  const taskValue = this.parentNode.children[1].innerText;
+		  removeTaskFromLocalStorage("completedTasks", taskValue);
+		  const completedTasks = JSON.parse(localStorage.getItem('completedTasks'));
+		  if(!completedTasks || completedTasks.length === 0){				
+				toggleCompletedTaskSection("none");
+			}
+		  addTaskToLocalStorage("todoTasks", taskValue);
         };
 
         var bindTaskEvents = function(taskListItem, checkBoxEventHandler, cb) {
@@ -186,9 +207,6 @@
 		const updateTaskLocalStorage = (slug, value, target) => {
 			const storedTasks = JSON.parse(localStorage.getItem(slug)) || [];
 			
-			console.log(storedTasks);
-			console.log(value);
-			console.log(target);
 			const newTasks = storedTasks.map(task => {
 				if(task === target){
 					return value;
@@ -217,6 +235,14 @@
 			}
 		}
 		
+				const toggleCompletedTaskSection = (display) => {
+			const toggleCompletedTaskSection = document.getElementsByClassName("completed");
+			var i;
+			for (i = 0; i < toggleCompletedTaskSection.length; i++) {
+				toggleCompletedTaskSection[i].style.display = display;
+			}
+		}
+		
 		window.onload = function() {
 			const defaultTodoTasks = JSON.parse(localStorage.getItem('todoTasks'));
 			
@@ -225,11 +251,26 @@
 				incompleteTasksHolder.appendChild(listItem)
 				bindTaskEvents(listItem, taskCompleted)
 			});
-			
-			//localStorage.setItem('todoTasks', JSON.stringify(['Pay Bills', 'Go Shopping']));
-			
+
 			if(!defaultTodoTasks || defaultTodoTasks.length === 0){				
 				toggleTodoTaskSection("none");
+			}
+			
+			const defaultCompletedTasks = JSON.parse(localStorage.getItem('completedTasks'));
+			
+			defaultCompletedTasks && defaultCompletedTasks.forEach((task) => {
+				listItem = createNewTaskElement(task)
+				completedTasksHolder.appendChild(listItem);
+				bindTaskEvents(listItem, taskIncomplete);
+			});
+			
+			//localStorage.setItem('todoTasks', JSON.stringify(['Pay Bills', 'Go Shopping']));
+			//localStorage.setItem('completedTasks', JSON.stringify(['Pay Bills', 'Go Shopping']));
+			
+
+			
+						if(!defaultCompletedTasks || defaultCompletedTasks.length === 0){				
+				toggleCompletedTaskSection("none");
 			}
 
 		};
