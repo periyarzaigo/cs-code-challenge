@@ -93,27 +93,36 @@
           var editInput = listItem.querySelectorAll("input[type=text")[0];
           var label = listItem.querySelector("label");
           var button = listItem.getElementsByTagName("button")[0];
+		
+		  editInput.classList.remove("is-required");
+		
+		
+		  var containsClass = listItem.classList.contains("editMode");
 
-          var containsClass = listItem.classList.contains("editMode");
-          if (containsClass) {
-              label.innerText = editInput.value
-              button.innerText = "Edit";
-          } else {
-             editInput.value = label.innerText
-             button.innerText = "Save";
-          }
-          
-          listItem.classList.toggle("editMode");
-		  
-		  let taskSlug = "";
-		  if(listItem.parentNode.id === "incomplete-tasks"){
-				taskSlug = "todoTasks";
-		  }else if(ul.id === "completed-tasks"){
-				taskSlug = "";
-		  }
-		  const taskValue = label.innerText;
-		  const exTaskTarget = button.dataset.value;
-		  updateTaskLocalStorage(taskSlug, taskValue, exTaskTarget);
+		  if(!containsClass){
+				listItem.classList.toggle("editMode");
+				editInput.value = label.innerText
+				button.innerText = "Save";
+		}
+		
+		if(containsClass){
+			if(editInput.value && editInput.value.trim()){		
+				let taskSlug = "";
+				if(listItem.parentNode.id === "incomplete-tasks"){
+						taskSlug = "todoTasks";
+				}else if(ul.id === "completed-tasks"){
+						taskSlug = "";
+				}
+				const taskValue = editInput.value;
+				const exTaskTarget = button.dataset.value;
+				updateTaskLocalStorage(taskSlug, taskValue, exTaskTarget);
+				listItem.classList.toggle("editMode");
+				label.innerText = editInput.value;
+				button.innerText = "Edit";
+			}else{
+				editInput.classList.add("is-required");
+			}
+		}
 		  
         };
 
