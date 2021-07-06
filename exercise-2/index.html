@@ -12,8 +12,8 @@
               <label id="new-task-label" for="new-task" style="display: block; margin: 0 0 20px">
                   <b>Add Item</b>
               </label>
-              <input id="new-task" type="text">
-              <button>Add</button>
+              <input id="new-task" type="text" onfocus="handleInputFocus(this)">
+              <button id="new-task-button">Add</button>
           </p>
 
           <h3>
@@ -24,13 +24,13 @@
                   <input type="checkbox">
                   <label>Pay Bills</label>
                   <input type="text">
-                  <button class="edit">Edit</button>
+                  <button class="edit edit-task-button">Edit</button>
                   <button class="delete">Delete</button>
               <li class="editMode">
                   <input type="checkbox">
                   <label>Go Shopping</label>
                   <input type="text" value="Go Shopping">
-                  <button class="edit">Save</button>
+                  <button class="edit edit-task-button">Save</button>
                   <button class="delete">Delete</button>
               </li>
           </ul>
@@ -79,13 +79,24 @@
 
           return listItem;
         };
+		
+		const handleInputFocus = (el) => {
+			if(el.classList.contains("is-required")){
+				el.classList.remove("is-required");
+			}
+		}
 
         var addTask = function () {
-          var listItemName = taskInput.value || "New Item"
-          listItem = createNewTaskElement(listItemName)
-          incompleteTasksHolder.appendChild(listItem)
-          bindTaskEvents(listItem, taskCompleted)
-          taskInput.value = "";
+		  taskInput.classList.remove("is-required");
+          var listItemName = taskInput.value;
+		  if(listItemName && listItemName.trim()){
+			listItem = createNewTaskElement(listItemName)
+			incompleteTasksHolder.appendChild(listItem)
+			bindTaskEvents(listItem, taskCompleted)
+			taskInput.value = "";
+		  }else{
+			taskInput.classList.add("is-required");
+		  }
         };
 
         var editTask = function () {
@@ -283,4 +294,9 @@
   html body ul li.editMode label {
     display :none;
   }
+  
+  .is-required {
+    border: 1px solid red !important;
+  }
+  
 </style>
