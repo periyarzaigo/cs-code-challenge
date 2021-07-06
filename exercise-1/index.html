@@ -1,5 +1,17 @@
 <html>
    <head>
+	  <style>
+		.additional-info{
+			display: none;
+		}
+		.user ul{
+			list-style: none;
+			padding-left: 0px;
+		}
+		.user ul li{
+			padding-bottom: 5px;
+		}
+	  </style>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
       <script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
    </head>
@@ -7,41 +19,47 @@
       <script id="app" type="text/x-handlebars-template">
          <ul class="users">
          {{#users}}
-         <li>
-         <ul>
-         <li><b>ID:</b> {{id}}</li>
-         <li><b>Name:</b> {{name}}</li>
-         <li><b>UserName:</b> {{username}}</li>
-         <li><b>Email:</b> {{email}}</li>
-         <li><button>Show Additional Info</button></li>
-         </ul>
+         <li class="user">
+			<ul>
+				<li class="additional-info"><b>ID:</b> {{id}}</li>
+				<li><b>Name:</b> {{name}}</li>
+				<li><b>UserName:</b> {{username}}</li>
+				<li class="additional-info"><b>Email:</b> {{email}}</li>
+				<li><button>Show Additional Info</button></li>
+			</ul>
          </li>
          {{/users}}
          </ul>           
       </script>
-      <script type="text/javascript">
-				//API Endpoint
-               const USERLIST_API = "https://jsonplaceholder.typicode.com/users";
-                 
-               $(document).ready(function(){        
-                	const template = $('#app').html();
-                	const templateScript = Handlebars.compile(template);
-                	                
-					//API 				
-                	fetch(USERLIST_API)
-                	.then((response) => {
-                		return response.json();
-                	})
-                	.then((json) => {
-                		//console.log(json);
-                		const context = { "users": json };
-                		const html = templateScript(context);
-                		$(document.body).append(html);
-                	}).catch((err) => {
-                		console.log(err, "UserList API Error");
-                	});	
-                		
-               });                
+      <script type="text/javascript">                
+		$(document).ready(function(){        
+			const template = $('#app').html();
+            const templateScript = Handlebars.compile(template);
+			
+            //API Endpoint
+			const USERLIST_API = "https://jsonplaceholder.typicode.com/users"; 
+			
+			//API 				
+            fetch(USERLIST_API)
+            .then((response) => {
+              	return response.json();
+            })
+            .then((json) => {
+             	const context = { "users": json };
+              	const html = templateScript(context);
+              	$(document.body).append(html);
+			
+				//Additional Info Button Click Handler
+				$("button").click(function(){
+					$(this).closest("ul").find(".additional-info").show();
+					$(this).hide();
+				});
+			
+            }).catch((err) => {
+              	console.log(err, "UserList API Error");
+            });	
+			                		
+         });                
       </script>
    </body>
 </html>
