@@ -16,10 +16,10 @@
               <button id="new-task-button">Add</button>
           </p>
 
-          <h3>
+          <h3 class="incomplete">
             <b>Todo</b>
           </h3>
-          <ul id="incomplete-tasks">
+          <ul class="incomplete" id="incomplete-tasks">
           </ul>
 
           <h3>
@@ -83,6 +83,7 @@
 			bindTaskEvents(listItem, taskCompleted)
 			taskInput.value = "";
 			addTaskToLocalStorage("todoTasks", listItemName);
+			toggleTodoTaskSection("block");
 		  }else{
 			taskInput.classList.add("is-required");
 		  }
@@ -208,6 +209,14 @@
 
 		}
 		
+		const toggleTodoTaskSection = (display) => {
+			const todoTaskTarget = document.getElementsByClassName("incomplete");
+			var i;
+			for (i = 0; i < todoTaskTarget.length; i++) {
+				todoTaskTarget[i].style.display = display;
+			}
+		}
+		
 		window.onload = function() {
 			const defaultTodoTasks = JSON.parse(localStorage.getItem('todoTasks'));
 			
@@ -218,6 +227,10 @@
 			});
 			
 			//localStorage.setItem('todoTasks', JSON.stringify(['Pay Bills', 'Go Shopping']));
+			
+			if(!defaultTodoTasks || defaultTodoTasks.length === 0){				
+				toggleTodoTaskSection("none");
+			}
 
 		};
 		
