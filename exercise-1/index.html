@@ -1,0 +1,47 @@
+<html>
+   <head>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+   </head>
+   <body>
+      <script id="app" type="text/x-handlebars-template">
+         <ul class="users">
+         {{#users}}
+         <li>
+         <ul>
+         <li><b>ID:</b> {{id}}</li>
+         <li><b>Name:</b> {{name}}</li>
+         <li><b>UserName:</b> {{username}}</li>
+         <li><b>Email:</b> {{email}}</li>
+         <li><button>Show Additional Info</button></li>
+         </ul>
+         </li>
+         {{/users}}
+         </ul>           
+      </script>
+      <script type="text/javascript">
+				//API Endpoint
+               const USERLIST_API = "https://jsonplaceholder.typicode.com/users";
+                 
+               $(document).ready(function(){        
+                	const template = $('#app').html();
+                	const templateScript = Handlebars.compile(template);
+                	                
+					//API 				
+                	fetch(USERLIST_API)
+                	.then((response) => {
+                		return response.json();
+                	})
+                	.then((json) => {
+                		//console.log(json);
+                		const context = { "users": json };
+                		const html = templateScript(context);
+                		$(document.body).append(html);
+                	}).catch((err) => {
+                		console.log(err, "UserList API Error");
+                	});	
+                		
+               });                
+      </script>
+   </body>
+</html>
