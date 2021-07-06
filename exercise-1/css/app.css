@@ -1,10 +1,41 @@
-.additional-info{
-	display: none;
+html body {
+     background: #ffffff;
+     color: #333;
+     font-family: Lato, sans-serif;
+     font-size:16px 
 }
-.user ul{
-	list-style: none;
-	padding-left: 0px;
+ html body .container {
+     display: block;
+     width: 600px;
+     margin: 100px auto 0;
 }
-.user ul li{
-	padding-bottom: 5px;
+ li {
+     list-style: none;
+}
+ .additional-info{
+     display: none;
+}
+ .user ul li{
+     padding-bottom: 5px;
+}
+ .users>li {
+     margin-bottom: 7px;
+     background: #ececec;
+     border: solid 1px #ccc;
+     padding: 1% 
+}
+ .user>ul{
+    padding:0;
+    margin:0;
+}
+ button {
+     background: #000;
+     border: none;
+     padding: 8px;
+     color: #fff;
+    cursor: pointer;
+     border-radius: 3px;
+}
+ button:hover{
+     background:#f00;
 }
